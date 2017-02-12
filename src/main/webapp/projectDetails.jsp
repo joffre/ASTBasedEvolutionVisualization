@@ -1,3 +1,4 @@
+<%@page import="org.eclipse.egit.github.core.RepositoryCommit"%>
 <%@page import="java.util.ArrayList"%>
 <%@page import="java.util.List"%>
 <%@page import="com.hamesc.opl.utils.ConstantUtils"%>
@@ -310,36 +311,22 @@
 									<tr>
 										<th>Title</th>
 										<th>Author</th>
-										<th>Last update</th>
-										<th>State</th>
-										<th>Average</th>
+										<th>Date</th>
+										<th>Additions</th>
+										<th>Deletions</th>
 									</tr>
 								</thead>
-								<!-- <tbody>
-									<c:forEach var="pullReq" items="${pullRequests}">
-										<% 
-										Map<Long,Integer> map = (Map<Long,Integer>) request.getAttribute(ConstantUtils.ID_REQUEST_AVERAGE);
-										int average = map.get(((PullRequest)pageContext.getAttribute("pullReq")).getId());
-										   if(average < 3 && average >= 0) {
-										%>
-										<tr class="danger">
-										<% } else if(average >= 3 && average < 7) { %>
-										<tr class="warning">
-										<% } else if(average == -1){ %>
-										<tr class="info">
-										<% } else { %>
-										<tr class="success">
-										<% } %>	
-											<td><a href="/PRM-Web/pullRequest?id=${pullReq.id}">${pullReq.title}</a></td>
-											<td>${pullReq.user.login}</td>
-											<td>${pullReq.updatedAt}</td>
-											<td class="center">${fn:toUpperCase(pullReq.state)}</td>
-											<td><% if(average != -1) { %> <%= average %> <% } else { %>NA <% } %></td>
+								<tbody>
+									<% for(RepositoryCommit rC : (List<RepositoryCommit>) request.getAttribute("commits")){ %>
+										<tr>
+											<td><a href="<%= request.getContextPath() %>/commit?id=<%= rC.getSha()%>"><%= rC.getCommit().getSha()%></a></td>
+											<td><%= rC.getAuthor().getName() %></td>
+											<td><%= rC.getCommit().getAuthor().getDate() %></td>
+											<td class="center"><%= rC.getStats().getAdditions() %></td>
+											<td class="center"><%= rC.getStats().getDeletions() %></td>
 										</tr>
-									</c:forEach>
-
+										<% } %>
 								</tbody>
-								 -->
 							</table>							
 						</div>
 						<!-- /.panel-body -->

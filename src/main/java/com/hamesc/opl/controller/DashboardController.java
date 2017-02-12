@@ -13,6 +13,7 @@ import org.eclipse.egit.github.core.Repository;
 import org.eclipse.egit.github.core.RepositoryCommit;
 import org.eclipse.egit.github.core.RepositoryId;
 import org.eclipse.egit.github.core.client.GitHubClient;
+import org.eclipse.egit.github.core.service.CommitService;
 import org.eclipse.egit.github.core.service.PullRequestService;
 import org.eclipse.egit.github.core.service.RepositoryService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -60,12 +61,6 @@ public class DashboardController {
 				List<RepositoryCommit> rcs = githubService.getAllCommitFromAllProject(client, repos);
 				request.getSession().setAttribute(ConstantUtils.ID_SESSION_COMMITS, rcs);
 			}
-			/*Map<Long, Integer> mapAverage = new HashMap<Long, Integer>();
-			for(PullRequest pr : (List<PullRequest>)request.getSession().getAttribute(ConstantUtils.ID_SESSION_PULLREQUESTS)) {
-				mapAverage.put(pr.getId(), pluginService.getEvaluationForPullRequest(pr));
-			}
-			request.setAttribute(ConstantUtils.ID_REQUEST_AVERAGE, mapAverage);*/
-			//request.getSession().setAttribute(ConstantUtils.ALL_PLUGINS, pluginService.getPlugins());
 			return "dashboard";
 		} else {
 			logger.info("Redirection vers la page de login, dashboard sans session");
@@ -78,12 +73,12 @@ public class DashboardController {
 			@RequestParam(required=true, name="name") String projectName,
 			HttpSession session,
 			HttpServletRequest request){
-		logger.info("Redirection vers le détail d'un projet");
-		PullRequestService service = new PullRequestService(client);
+		logger.info("Redirection vers le detail d'un projet");
+		CommitService service = new CommitService(client);
 		RepositoryId repo = new RepositoryId(client.getUser(), projectName);
 		ModelAndView mv = new ModelAndView("projectDetails");
 		try {
-			List<PullRequest> prs = service.getPullRequests(repo, null);
+			List<RepositoryCommit> prs = service.getCommits(repo);
 			logger.info("La taille de pull request : " + prs.size());
 			mv.addObject("commits",prs);
 			/*Map<Long, Integer> mapAverage = new HashMap<Long, Integer>();

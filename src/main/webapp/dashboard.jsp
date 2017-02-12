@@ -1,3 +1,5 @@
+<%@page import="org.eclipse.egit.github.core.RepositoryCommit"%>
+<%@page import="org.eclipse.egit.github.core.Repository"%>
 <%@page import="com.hamesc.opl.utils.ConstantUtils"%>
 <%@page import="java.util.ArrayList"%>
 <%@page import="java.util.List"%>
@@ -258,16 +260,13 @@
 					<li><a id="expandProject" href="#"><i class="fa fa-bar-chart-o fa-fw active"></i>User
 							projects<span class="fa arrow"></span></a>
 						<ul class="nav nav-second-level">
-							<c:forEach var="userProjectName"
-								items="${sessionScope.GITHUB_REPOS}">
-								<li><a
-									href="<c:url value="projectDetails?name=${userProjectName.name}"/>">${userProjectName.name}</a>
-								</li>
-							</c:forEach>
+							<% for(Repository repo : (List<Repository>) session.getAttribute(ConstantUtils.ID_SESSION_REPOS)){ %>
+							
+							<li><a href="<%= request.getContextPath() %>/projectDetails?name=<%=repo.getName() %>"><%=repo.getName() %></a>
+							</li>
+							<% } %>
 						</ul> <!-- /.nav-second-level --></li>
 					<li><a href="dashboard"><i class="fa fa-tasks fa-fw"></i>Tasks</a>
-					</li>
-					<li><a href="/PRM-Web/plugin"><i class="fa fa-wrench fa-fw"></i>Plugins</a>
 					</li>
 				</ul>
 			</div>
@@ -292,7 +291,7 @@
 									<i class="fa fa-file-o fa-5x"></i>
 								</div>
 								<div class="col-xs-9 text-right">
-									<div class="huge">${fn:length(COMMIT_PROJECTS)}</div>
+									<div class="huge"><%= ((List<RepositoryCommit>) session.getAttribute(ConstantUtils.ID_SESSION_COMMITS)).size() %></div>
 									<div>Commits !</div>
 								</div>
 							</div>
@@ -314,7 +313,7 @@
 									<i class="fa fa-tasks fa-5x"></i>
 								</div>
 								<div class="col-xs-9 text-right">
-									<div class="huge">${fn:length(sessionScope.GITHUB_REPOS)}</div>
+									<div class="huge"><%= ((List<Repository>) session.getAttribute(ConstantUtils.ID_SESSION_REPOS)).size() %></div>
 									<div>Github project</div>
 								</div>
 							</div>
@@ -368,24 +367,22 @@
 								id="dataTables-example">
 								<thead>
 									<tr>
-										<th>Repository</th>
-										<th>Title</th>
+										<th>Date</th>
+										<th>Detail</th>
 										<th>Author</th>
-										<th>Last update</th>
-										<th>State</th>
-										<th>Average</th>
+										<th>See on Github</th>
 									</tr>
 								</thead>
 								<tbody>
-									<c:forEach var="commit" items="${COMMIT_PROJECTS}">
+									<% for (RepositoryCommit commit : (List<RepositoryCommit>) session.getAttribute(ConstantUtils.ID_SESSION_COMMITS)){ %>
+									
 										<tr>
-										<c:set var="repoName" value="${commit.author.name}"/>
-											<td><a href="${commit.commit.url}"><strong>${commit.commit.url}</strong></a></td>
-											<td>${commit.author.name}</td>
-											<td>${commit.commit.message}</td>
+											<td><%= commit.getCommit().getAuthor().getDate() %></td>
+											<td><%= commit.getCommit().getMessage() %></td>
+											<td><%= commit.getCommit().getAuthor().getName() %></td>
+											<td><a href="<%= commit.getUrl() %>"><strong>Link</strong></a></td>
 										</tr>
-									</c:forEach>
-
+									<% } %>
 								</tbody>
 							</table>
 							<!-- /.table-responsive -->
