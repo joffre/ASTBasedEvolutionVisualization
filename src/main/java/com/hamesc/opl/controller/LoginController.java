@@ -29,8 +29,6 @@ public class LoginController {
 	Logger logger = Logger.getLogger(LoginController.class);
 	@Autowired
 	private HttpServletRequest context;
-	@Autowired
-	private GithubService service;
 
 	@RequestMapping(value = "/loginOAuth", method = RequestMethod.GET)
 	public String loginOAuth(HttpServletRequest request, 

@@ -59,7 +59,7 @@
 					class="icon-bar"></span> <span class="icon-bar"></span> <span
 					class="icon-bar"></span>
 			</button>
-			<a class="navbar-brand" href="index.html">Pull Request Manager</a>
+			<a class="navbar-brand" href="index.html">AST Based Evolution Visualization</a>
 		</div>
 		<!-- /.navbar-header -->
 
@@ -292,8 +292,8 @@
 									<i class="fa fa-file-o fa-5x"></i>
 								</div>
 								<div class="col-xs-9 text-right">
-									<div class="huge">${fn:length(PULLREQUEST_PROJECTS)}</div>
-									<div>New Pull requests !</div>
+									<div class="huge">${fn:length(COMMIT_PROJECTS)}</div>
+									<div>Commits !</div>
 								</div>
 							</div>
 						</div>
@@ -328,7 +328,7 @@
 						</a>
 					</div>
 				</div>
-                <div class="col-lg-3 col-md-6">
+                <!-- <div class="col-lg-3 col-md-6">
                     <div class="panel panel-red">
                         <div class="panel-heading">
                             <div class="row">
@@ -349,12 +349,12 @@
                             </div>
                         </a>
                     </div>
-                </div>
+                </div>-->
 			</div>
 				<!-- /.row -->
 			<div class="row">
 				<div class="col-lg-12">
-					<h1 class="page-header">All your pull request</h1>
+					<h1 class="page-header">All your commit</h1>
 				</div>
 				<!-- /.col-lg-12 -->
 			</div>
@@ -377,27 +377,12 @@
 									</tr>
 								</thead>
 								<tbody>
-									<c:forEach var="pullReq" items="${PULLREQUEST_PROJECTS}">
-										<% 
-										Map<Long,Integer> map = (Map<Long,Integer>) request.getAttribute(ConstantUtils.ID_REQUEST_AVERAGE);
-										int average = map.get(((PullRequest)pageContext.getAttribute("pullReq")).getId());
-										   if(average < 3 && average >= 0) {
-										%>
-										<tr class="danger">
-										<% } else if(average >= 3 && average < 7) { %>
-										<tr class="warning">
-										<% } else if(average == -1){ %>
-										<tr class="info">
-										<% } else { %>
-										<tr class="success">
-										<% } %>	
-										<c:set var="repoName" value="${pullReq.head.repo.name}"/>
-											<td><a href="/PRM-Web/projectDetails?name=${repoName}"><strong>${repoName}</strong></a></td>
-											<td><a href="/PRM-Web/pullRequest?id=${pullReq.id}">${pullReq.title}</a></td>
-											<td>${pullReq.user.login}</td>
-											<td>${pullReq.updatedAt}</td>
-											<td class="center">${fn:toUpperCase(pullReq.state)}</td>
-											<td><% if(average != -1) { %> <%= average %> <% } else { %>NA <% } %></td>
+									<c:forEach var="commit" items="${COMMIT_PROJECTS}">
+										<tr>
+										<c:set var="repoName" value="${commit.author.name}"/>
+											<td><a href="${commit.commit.url}"><strong>${commit.commit.url}</strong></a></td>
+											<td>${commit.author.name}</td>
+											<td>${commit.commit.message}</td>
 										</tr>
 									</c:forEach>
 
@@ -411,7 +396,6 @@
 				</div>
 				<!-- /.col-lg-12 -->
 			</div>
-			
 			</div>
 
 			<!-- jQuery -->

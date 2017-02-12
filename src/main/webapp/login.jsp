@@ -45,7 +45,7 @@
 			<div class="col-md-4 col-md-offset-4">
 				<div class="login-panel panel panel-default">
 					<div class="panel-heading">
-						<p class="h4">Welcome to Pull Request Manager</p>
+						<p class="h4">Welcome to AST Based Evolution Visualization</p>
 					</div>
 					<div class="panel-body">
 						<form action="<%= request.getContextPath() %>/login" method="post">

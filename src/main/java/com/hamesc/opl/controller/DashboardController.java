@@ -21,6 +21,7 @@ import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.SessionAttribute;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.hamesc.opl.service.GithubService;
@@ -33,10 +34,9 @@ public class DashboardController {
 	private GithubService githubService;
 	
 	Logger logger = Logger.getLogger(DashboardController.class);
+	
 	@Autowired
 	private HttpServletRequest context;
-	@Autowired
-	//private AuthorizationService authorization;
 
 	@RequestMapping(value = "/dashboard", method = RequestMethod.GET)
 	public String dashboard(HttpServletRequest request,

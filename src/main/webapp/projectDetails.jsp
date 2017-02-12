@@ -1,8 +1,7 @@
 <%@page import="java.util.ArrayList"%>
 <%@page import="java.util.List"%>
-<%@page import="com.escowad.prm.utils.ConstantUtils"%>
+<%@page import="com.hamesc.opl.utils.ConstantUtils"%>
 <%@page import="java.util.Map"%>
-<%@page import="com.escowad.prm.services.PluginService"%>
 <%@page import="org.eclipse.egit.github.core.PullRequest"%>
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1"
 	pageEncoding="ISO-8859-1"%>
@@ -293,7 +292,7 @@
 		<div id="page-wrapper">
 			<div class="row">
 				<div class="col-lg-12">
-					<h1 class="page-header">Pull request on project :
+					<h1 class="page-header">Commit on project :
 						${param['name']}</h1>
 				</div>
 				<!-- /.col-lg-12 -->
@@ -316,7 +315,7 @@
 										<th>Average</th>
 									</tr>
 								</thead>
-								<tbody>
+								<!-- <tbody>
 									<c:forEach var="pullReq" items="${pullRequests}">
 										<% 
 										Map<Long,Integer> map = (Map<Long,Integer>) request.getAttribute(ConstantUtils.ID_REQUEST_AVERAGE);
@@ -340,6 +339,7 @@
 									</c:forEach>
 
 								</tbody>
+								 -->
 							</table>							
 						</div>
 						<!-- /.panel-body -->

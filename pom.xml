@@ -23,7 +23,7 @@
         <dependency>
 		    <groupId>org.springframework</groupId>
 		    <artifactId>spring-webmvc</artifactId>
-		    <version>4.0.2.RELEASE</version>
+		    <version>4.3.3.RELEASE</version>
 		</dependency>
 		<dependency>
             <groupId>org.eclipse.mylyn.github</groupId>
@@ -44,6 +44,8 @@
 		</dependency>
   </dependencies>
   <build>
+  
     <finalName>ASTBasedEvolutionVisualization</finalName>
+    
   </build>
 </project>

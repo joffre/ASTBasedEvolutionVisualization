@@ -5,13 +5,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.log4j.Logger;
-import org.eclipse.egit.github.core.*;
+import org.eclipse.egit.github.core.PullRequest;
+import org.eclipse.egit.github.core.Repository;
+import org.eclipse.egit.github.core.RepositoryCommit;
+import org.eclipse.egit.github.core.RepositoryId;
 import org.eclipse.egit.github.core.client.GitHubClient;
 import org.eclipse.egit.github.core.service.CommitService;
 import org.eclipse.egit.github.core.service.PullRequestService;
-import org.springframework.stereotype.Service;
+import org.eclipse.egit.github.core.service.RepositoryService;
+import org.springframework.stereotype.Component;
 
-@Service
+@Component
 public class GithubService {
 
 	Logger logger = Logger.getLogger(GithubService.class);
@@ -35,15 +39,15 @@ public class GithubService {
 
 	public List<RepositoryCommit> getAllCommitFromAllProject(GitHubClient user, List<Repository> repos) {
 		CommitService commitService = new CommitService();
-		PullRequestService prService = new PullRequestService(user);
 		RepositoryId repoId;
 		List<RepositoryCommit> allCommitList = new ArrayList<RepositoryCommit>();
 		for(int i = 0 ; i < repos.size() ; i ++) {
 			repoId = new RepositoryId(user.getUser(), repos.get(i).getName());
 			try {
 				allCommitList.addAll(commitService.getCommits(repoId));
+				logger.info("Commites trouvés pour ce repository : " + repos.get(i).getName());
 			} catch (IOException e) {
-				logger.info("Pas de commits pour ce repository");
+				logger.info("Pas de commits pour ce repository : " + repos.get(i).getName());
 				logger.info("Suivant..");
 			}
 		}
