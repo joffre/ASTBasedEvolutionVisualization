@@ -20,14 +20,14 @@ import fr.inria.sacha.spoon.diffSpoon.SpoonGumTreeBuilder;
 import spoon.reflect.declaration.CtElement;
 import spoon.reflect.declaration.CtType;
 
-public class PrettyPR {
+public class ASTDiff {
 
     private String newContent;
     private String oldContent;
     private String nomNew;
     private String nomOld;
 
-    public PrettyPR(String nomOld, String oldContent, String nomNew, String newContent) {
+    public ASTDiff(String nomOld, String oldContent, String nomNew, String newContent) {
         this.oldContent = oldContent;
         this.newContent = newContent;
         this.nomNew = nomNew;
