@@ -7,7 +7,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
 import org.eclipse.egit.github.core.client.GitHubClient;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.CookieValue;
@@ -24,10 +23,7 @@ public class LoginController {
 		return "login";
 	}
 
-
 	Logger logger = Logger.getLogger(LoginController.class);
-	@Autowired
-	private HttpServletRequest context;
 
 	@RequestMapping(value = "/loginOAuth", method = RequestMethod.GET)
 	public String loginOAuth(HttpServletRequest request, 
@@ -37,7 +33,6 @@ public class LoginController {
 			logger.info("Pas de cookie client ID, redirection vers la mire de login");
 			return "loginOAuth";
 		} else {
-			// On place l'ID client dans la Session et on envoie vers le dashboard
 			request.getSession().setAttribute(ConstantUtils.ID_SESSION_CLI_GITHUB, clientId);
 			return "dashboard";
 		}
@@ -61,7 +56,6 @@ public class LoginController {
 		} else {
 			GitHubClient client = new GitHubClient();
 			client.setCredentials(username, password);
-			// On place en session
 			request.getSession().setAttribute(ConstantUtils.ID_SESSION_USERGIT, client);
 			return "redirect:/dashboard";
 		}
@@ -79,7 +73,6 @@ public class LoginController {
 			ModelMap model) {
 		String clientId = request.getParameter("client_id");
 		String secretId = request.getParameter("secret_id");
-		// On set dans la session les deux values de connexion
 		request.getSession().setAttribute(ConstantUtils.ID_SESSION_CLI_GITHUB, clientId);
 		request.getSession().setAttribute(ConstantUtils.ID_SESSION_SECRET_GITHUB, secretId);
 		// Pour authent il faut renvoyer le lien github
@@ -89,7 +82,7 @@ public class LoginController {
 	@RequestMapping(value = "/logout", method = RequestMethod.GET)
 	public String logout(HttpServletRequest request, ModelMap model) {
 
-		//Clean cookies
+		//Clean cookies TODO
 
 		request.getSession().invalidate();
 

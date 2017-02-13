@@ -8,13 +8,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.apache.log4j.Logger;
-import org.eclipse.egit.github.core.PullRequest;
 import org.eclipse.egit.github.core.Repository;
 import org.eclipse.egit.github.core.RepositoryCommit;
 import org.eclipse.egit.github.core.RepositoryId;
 import org.eclipse.egit.github.core.client.GitHubClient;
-import org.eclipse.egit.github.core.service.CommitService;
-import org.eclipse.egit.github.core.service.PullRequestService;
 import org.eclipse.egit.github.core.service.RepositoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -35,9 +32,6 @@ public class DashboardController {
 	private GithubService githubService;
 	
 	Logger logger = Logger.getLogger(DashboardController.class);
-	
-	@Autowired
-	private HttpServletRequest context;
 
 	@RequestMapping(value = "/dashboard", method = RequestMethod.GET)
 	public String dashboard(HttpServletRequest request,
@@ -80,7 +74,7 @@ public class DashboardController {
 			List<RepositoryCommit> prs = githubService.getAllCommitFromProject(client, repoId);
 			logger.info("La taille de commits : " + prs.size());
 			mv.addObject("commits",prs);
-			logger.info("Commites trouvés pour ce repository : " + projectName);
+			logger.info("Commites trouves pour ce repository : " + projectName);
 		} catch (IOException e) {
 			logger.info("Pas de commits pour ce repository : " + projectName);
 		}

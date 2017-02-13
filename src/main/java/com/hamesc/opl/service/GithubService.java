@@ -12,7 +12,6 @@ import org.eclipse.egit.github.core.RepositoryId;
 import org.eclipse.egit.github.core.client.GitHubClient;
 import org.eclipse.egit.github.core.service.CommitService;
 import org.eclipse.egit.github.core.service.PullRequestService;
-import org.eclipse.egit.github.core.service.RepositoryService;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -33,7 +32,7 @@ public class GithubService {
 				logger.info("Passage au suivant..");
 			}
 		}
-		logger.info("Pull request trouvé : " + allPrList.size());
+		logger.info("Pull request trouves : " + allPrList.size());
 		return allPrList;
 	}
 
@@ -51,7 +50,7 @@ public class GithubService {
 				logger.info("Suivant..");
 			}
 		}
-		logger.info("Commits trouvés : " + allCommitList.size());
+		logger.info("Commits trouves : " + allCommitList.size());
 		return allCommitList;
 	}
 	
