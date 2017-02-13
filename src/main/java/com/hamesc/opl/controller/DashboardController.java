@@ -74,20 +74,15 @@ public class DashboardController {
 			HttpSession session,
 			HttpServletRequest request){
 		logger.info("Redirection vers le detail d'un projet");
-		CommitService service = new CommitService(client);
-		RepositoryId repo = new RepositoryId(client.getUser(), projectName);
+		RepositoryId repoId = new RepositoryId(client.getUser(), projectName);
 		ModelAndView mv = new ModelAndView("projectDetails");
 		try {
-			List<RepositoryCommit> prs = service.getCommits(repo);
-			logger.info("La taille de pull request : " + prs.size());
+			List<RepositoryCommit> prs = githubService.getAllCommitFromProject(client, repoId);
+			logger.info("La taille de commits : " + prs.size());
 			mv.addObject("commits",prs);
-			/*Map<Long, Integer> mapAverage = new HashMap<Long, Integer>();
-			for(PullRequest pr : prs) {
-				mapAverage.put(pr.getId(), pluginService.getEvaluationForPullRequest(pr));
-			}
-			request.setAttribute(ConstantUtils.ID_REQUEST_AVERAGE, mapAverage);*/
+			logger.info("Commites trouvés pour ce repository : " + projectName);
 		} catch (IOException e) {
-			e.printStackTrace();
+			logger.info("Pas de commits pour ce repository : " + projectName);
 		}
 		return mv;
 	}

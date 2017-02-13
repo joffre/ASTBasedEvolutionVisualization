@@ -12,7 +12,7 @@
 <meta name="description" content="">
 <meta name="author" content="">
 
-<title>Login PRM</title>
+<title>Login ASTBasedEvolutionVisualization</title>
 
 <!-- Bootstrap Core CSS -->
 <link

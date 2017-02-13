@@ -38,13 +38,13 @@ public class GithubService {
 	}
 
 	public List<RepositoryCommit> getAllCommitFromAllProject(GitHubClient user, List<Repository> repos) {
-		CommitService commitService = new CommitService();
+		
 		RepositoryId repoId;
 		List<RepositoryCommit> allCommitList = new ArrayList<RepositoryCommit>();
 		for(int i = 0 ; i < repos.size() ; i ++) {
 			repoId = new RepositoryId(user.getUser(), repos.get(i).getName());
 			try {
-				allCommitList.addAll(commitService.getCommits(repoId));
+				allCommitList.addAll(getAllCommitFromProject(user, repoId));
 				logger.info("Commites trouvés pour ce repository : " + repos.get(i).getName());
 			} catch (IOException e) {
 				logger.info("Pas de commits pour ce repository : " + repos.get(i).getName());
@@ -53,5 +53,10 @@ public class GithubService {
 		}
 		logger.info("Commits trouvÃ©s : " + allCommitList.size());
 		return allCommitList;
+	}
+	
+	public List<RepositoryCommit> getAllCommitFromProject(GitHubClient user, RepositoryId repoId) throws IOException{
+		CommitService commitService = new CommitService();
+		return commitService.getCommits(repoId);
 	}
 }

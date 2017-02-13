@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-import com.hamesc.opl.service.GithubService;
 import com.hamesc.opl.utils.ConstantUtils;
 
 @Controller
@@ -52,7 +51,7 @@ public class LoginController {
 
 	@RequestMapping(value = "/login", method=RequestMethod.POST)
 	public String loginPost(HttpServletRequest request, ModelMap model,HttpServletResponse response) throws IOException {
-		logger.info("Requete POST reçu");
+		logger.info("Requete POST recu");
 		String username = request.getParameter("usernameGitHub");
 		String password = request.getParameter("passwordGitHub");
 		logger.info("Username : " + username);

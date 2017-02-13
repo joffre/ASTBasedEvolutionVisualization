@@ -19,7 +19,7 @@
 <meta name="description" content="">
 <meta name="author" content="">
 
-<title>Dashboard pull request</title>
+<title>Dashboard AST Based Evolution Visualization</title>
 <!-- Bootstrap Core CSS -->
 <link
 	href="<%= request.getContextPath() %>/resources/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet" type="text/css">

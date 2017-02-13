@@ -1,3 +1,4 @@
+<%@page import="org.eclipse.egit.github.core.Repository"%>
 <%@page import="org.eclipse.egit.github.core.RepositoryCommit"%>
 <%@page import="java.util.ArrayList"%>
 <%@page import="java.util.List"%>
@@ -19,36 +20,30 @@
 <meta name="description" content="">
 <meta name="author" content="">
 
-<title>Pull Request Manager</title>
+<title>Project Details - AST.B.E.V</title>
 
 <!-- Bootstrap Core CSS -->
 <link
-	href="<c:url value="../resources/vendor/bootstrap/css/bootstrap.min.css"/>"
-	rel="stylesheet">
+	href="<%= request.getContextPath() %>/resources/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet" type="text/css">
 
 <!-- MetisMenu CSS -->
 <link
-	href="<c:url value="../resources/vendor/metisMenu/metisMenu.min.css"/>"
-	rel="stylesheet">
+	href="<%= request.getContextPath() %>/resources/vendor/metisMenu/metisMenu.min.css" rel="stylesheet" type="text/css">
 
 <!-- DataTables CSS -->
 <link
-	href="<c:url value="../resources/vendor/datatables-plugins/dataTables.bootstrap.css"/>"
-	rel="stylesheet">
+	href="<%= request.getContextPath() %>/resources/vendor/datatables-plugins/dataTables.bootstrap.css" rel="stylesheet" type="text/css">
 
 <!-- DataTables Responsive CSS -->
 <link
-	href="<c:url value="../resources/vendor/datatables-responsive/dataTables.responsive.css"/>"
-	rel="stylesheet">
+	href="<%= request.getContextPath() %>/resources/vendor/datatables-responsive/dataTables.responsive.css" rel="stylesheet" type="text/css">
 
 <!-- Custom CSS -->
-<link href="<c:url value="../resources/dist/css/sb-admin-2.css"/>"
-	rel="stylesheet">
+<link href="<%= request.getContextPath() %>/resources/dist/css/sb-admin-2.css" rel="stylesheet" type="text/css">
 
 <!-- Custom Fonts -->
 <link
-	href="<c:url value="../resources/vendor/font-awesome/css/font-awesome.min.css"/>"
-	rel="stylesheet" type="text/css">
+	href="<%= request.getContextPath() %>/resources/vendor/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
 
 <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
 <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -73,8 +68,7 @@
 					class="icon-bar"></span> <span class="icon-bar"></span> <span
 					class="icon-bar"></span>
 			</button>
-			<a class="navbar-brand" href="/PRM-Web/dashboard">Pull Request
-				Manager</a>
+			<a class="navbar-brand" href="<%= request.getContextPath() %>/dashboard">AST Based Evolution Visualization</a>
 		</div>
 		<!-- /.navbar-header -->
 
@@ -273,16 +267,13 @@
 					<li><a href="#"><i class="fa fa-bar-chart-o fa-fw"></i>User
 							projects<span class="fa arrow"></span></a>
 						<ul class="nav nav-second-level">
-							<c:forEach var="userProjectName"
-								items="${sessionScope.GITHUB_REPOS}">
-								<li><a
-									href="<c:url value="projectDetails?name=${userProjectName.name}"/>">${userProjectName.name}</a>
-								</li>
-							</c:forEach>
+							<% for(Repository repo : (List<Repository>) session.getAttribute(ConstantUtils.ID_SESSION_REPOS)){ %>
+							
+							<li><a href="<%= request.getContextPath() %>/projectDetails?name=<%=repo.getName() %>"><%=repo.getName() %></a>
+							</li>
+							<% } %>
 						</ul> <!-- /.nav-second-level --></li>
 					<li><a href="dashboard"><i class="fa fa-tasks fa-fw"></i>Tasks</a>
-					</li>
-					<li><a href="/PRM-Web/plugin"><i class="fa fa-wrench fa-fw"></i>Plugins</a>
 					</li>
 				</ul>
 			</div>
@@ -294,7 +285,7 @@
 			<div class="row">
 				<div class="col-lg-12">
 					<h1 class="page-header">Commit on project :
-						${param['name']}</h1>
+						<%= request.getParameter("name") %></h1>
 				</div>
 				<!-- /.col-lg-12 -->
 			</div>
@@ -309,23 +300,28 @@
 								id="dataTables-example">
 								<thead>
 									<tr>
-										<th>Title</th>
+										
+										<th>Detail</th>
 										<th>Author</th>
 										<th>Date</th>
 										<th>Additions</th>
 										<th>Deletions</th>
+										<th>See on Github</th>
 									</tr>
 								</thead>
 								<tbody>
+									<% if(request.getAttribute("commits") != null){ %>
 									<% for(RepositoryCommit rC : (List<RepositoryCommit>) request.getAttribute("commits")){ %>
 										<tr>
-											<td><a href="<%= request.getContextPath() %>/commit?id=<%= rC.getSha()%>"><%= rC.getCommit().getSha()%></a></td>
-											<td><%= rC.getAuthor().getName() %></td>
+											
+											<td><%= rC.getCommit().getMessage() %>
+											<td><a href="<%= rC.getAuthor().getUrl() %>"><strong><%= rC.getCommit().getAuthor().getName() %></strong></a></td>
 											<td><%= rC.getCommit().getAuthor().getDate() %></td>
-											<td class="center"><%= rC.getStats().getAdditions() %></td>
-											<td class="center"><%= rC.getStats().getDeletions() %></td>
+											<td class="center"><%= (rC.getStats() == null)?-1:rC.getStats().getAdditions() %></td>
+											<td class="center"><%= (rC.getStats() == null)?-1:rC.getStats().getDeletions() %></td>
+											<td><a href="<%= rC.getUrl() %>"><strong>Link</strong></a></td>
 										</tr>
-										<% } %>
+										<% } }%>
 								</tbody>
 							</table>							
 						</div>
@@ -337,26 +333,26 @@
 			</div>
 		</div>
 		<!-- jQuery -->
-		<script src="<c:url value="../resources/vendor/jquery/jquery.min.js"/>"></script>
+		<script src="<%= request.getContextPath() %>/resources/vendor/jquery/jquery.min.js"></script>
 
 		<!-- Bootstrap Core JavaScript -->
 		<script
-			src="<c:url value="../resources/vendor/bootstrap/js/bootstrap.min.js"/>"></script>
+			src="<%= request.getContextPath() %>/resources/vendor/bootstrap/js/bootstrap.min.js"></script>
 
 		<!-- Metis Menu Plugin JavaScript -->
 		<script
-			src="<c:url value="../resources/vendor/metisMenu/metisMenu.min.js"/>"></script>
+			src="<%= request.getContextPath() %>/resources/vendor/metisMenu/metisMenu.min.js"></script>
 
 		<!-- DataTables JavaScript -->
 		<script
-			src="<c:url value="../resources/vendor/datatables/js/jquery.dataTables.min.js"/>"></script>
+			src="<%= request.getContextPath() %>/resources/vendor/datatables/js/jquery.dataTables.min.js"></script>
 		<script
-			src="<c:url value="../resources/vendor/datatables-plugins/dataTables.bootstrap.min.js"/>"></script>
+			src="<%= request.getContextPath() %>/resources/vendor/datatables-plugins/dataTables.bootstrap.min.js"></script>
 		<script
-			src="<c:url value="../resources/vendor/datatables-responsive/dataTables.responsive.js"/>"></script>
+			src="<%= request.getContextPath() %>/resources/vendor/datatables-responsive/dataTables.responsive.js"></script>
 
 		<!-- Custom Theme JavaScript -->
-		<script src="<c:url value="../resources/dist/js/sb-admin-2.js"/>"></script>
+		<script src="<%= request.getContextPath() %>/resources/dist/js/sb-admin-2.js"></script>
 
 		<!-- Page-Level Demo Scripts - Tables - Use for reference -->
 		<script>
