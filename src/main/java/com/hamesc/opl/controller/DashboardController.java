@@ -22,14 +22,18 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.SessionAttribute;
 import org.springframework.web.servlet.ModelAndView;
 
-import com.hamesc.opl.service.GithubService;
+import com.hamesc.opl.service.ARepositoryService;
+import com.hamesc.opl.service.ARepositoryCommitService;
 import com.hamesc.opl.utils.ConstantUtils;
 
 @Controller
 public class DashboardController {
 
 	@Autowired
-	private GithubService githubService;
+	private ARepositoryCommitService githubService;
+	
+	@Autowired
+	private ARepositoryService repositoryService;
 	
 	Logger logger = Logger.getLogger(DashboardController.class);
 
@@ -41,16 +45,11 @@ public class DashboardController {
 			ModelMap model) {
 		if(client != null) {
 			logger.info("Redirection vers l'index dashboard");
-			RepositoryService service = new RepositoryService(client);
-			try {
-				if(repos == null) {
-					repos = service.getRepositories();
-					request.getSession().setAttribute(ConstantUtils.ID_SESSION_REPOS,repos);
-				}
-			} catch (IOException e) {
-				logger.info("Impossible de lister les repositories, authent fausse, redirection login");
-				return "redirect:/login";
+			if(repos == null) {
+				repos = repositoryService.getRepositories(client);
+				request.getSession().setAttribute(ConstantUtils.ID_SESSION_REPOS,repos);
 			}
+			
 			if(listCommit == null) {
 				List<RepositoryCommit> rcs = githubService.getAllCommitFromAllProject(client, repos);
 				request.getSession().setAttribute(ConstantUtils.ID_SESSION_COMMITS, rcs);

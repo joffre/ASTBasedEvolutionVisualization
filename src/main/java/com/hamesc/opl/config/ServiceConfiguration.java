@@ -4,14 +4,14 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 
-import com.hamesc.opl.service.GithubService;
+import com.hamesc.opl.service.ARepositoryCommitService;
 
 @Configuration
 @ComponentScan("com.hamesc.service")
 public class ServiceConfiguration {
 
 	@Bean
-	public GithubService githubService() {
-		return new GithubService();
+	public ARepositoryCommitService githubService() {
+		return new ARepositoryCommitService();
 	}
 }
