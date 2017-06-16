@@ -209,8 +209,6 @@ public class DiffService {
 
 				CtElement element = (CtElement) action.getNode().getMetadata(SpoonGumTreeBuilder.SPOON_OBJECT);
 
-				CtElement ctElement = result.commonAncestor();
-
 				String actionName = action.getClass().getSimpleName();
 
 				String nodeType = element.getClass().getSimpleName();
@@ -225,7 +223,7 @@ public class DiffService {
 
 				// if all actions are applied on the same node print only the
 				// first action
-				if (element.equals(ctElement) && action instanceof Update) {
+				if (element.equals(element) && action instanceof Update) {
 					break;
 				}
 				statsByAction.put(nodeType, hitByNodeType);

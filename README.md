@@ -1,6 +1,11 @@
 # ASTBasedEvolutionVisualization
 
+NEW VERSION :
+Deploy WAR file on your Tomcat or Wildfly server, start it, log with github credentials and enjoy !
 
+Next version soon.
+
+OLD VERSION : 
 Pour que git sache que vous utilisez un autre outil de diff, ajouter ces lignes à votre `~/.gitconfig`:
 
     [difftool "ast_cmp"]
