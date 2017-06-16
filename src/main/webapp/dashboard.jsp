@@ -1,10 +1,14 @@
-<%@page import="org.eclipse.egit.github.core.RepositoryCommit"%>
-<%@page import="org.eclipse.egit.github.core.Repository"%>
+<%@page import="entity.CommitDTO"%>
+<%@page import="entity.RepositoryDTO"%>
+<%@page import="org.kohsuke.github.GHCommit"%>
+<%@page import="org.kohsuke.github.GHRepository"%>
+<%-- <%@page import="org.eclipse.egit.github.core.RepositoryCommit"%> --%>
+<%-- <%@page import="org.eclipse.egit.github.core.Repository"%> --%>
 <%@page import="com.hamesc.opl.utils.ConstantUtils"%>
 <%@page import="java.util.ArrayList"%>
 <%@page import="java.util.List"%>
-<%@page import="java.util.Map"%>
-<%@page import="org.eclipse.egit.github.core.PullRequest"%>
+<%-- <%@page import="java.util.Map"%> --%>
+<%-- <%@page import="org.eclipse.egit.github.core.PullRequest"%> --%>
 
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1"
 	pageEncoding="ISO-8859-1"%>
@@ -260,9 +264,9 @@
 					<li><a id="expandProject" href="#"><i class="fa fa-bar-chart-o fa-fw active"></i>User
 							projects<span class="fa arrow"></span></a>
 						<ul class="nav nav-second-level">
-							<% for(Repository repo : (List<Repository>) session.getAttribute(ConstantUtils.ID_SESSION_REPOS)){ %>
+							<% for(RepositoryDTO repo : (List<RepositoryDTO>) session.getAttribute(ConstantUtils.ID_SESSION_REPOS)){ %>
 							
-							<li><a href="<%= request.getContextPath() %>/projectDetails?name=<%=repo.getName() %>"><%=repo.getName() %></a>
+							<li><a href="<%= request.getContextPath() %>/projectDetails?name=<%=repo.getFullName() %>"><%=repo.getName() %></a>
 							</li>
 							<% } %>
 						</ul> <!-- /.nav-second-level --></li>
@@ -291,7 +295,7 @@
 									<i class="fa fa-file-o fa-5x"></i>
 								</div>
 								<div class="col-xs-9 text-right">
-									<div class="huge"><%= ((List<RepositoryCommit>) session.getAttribute(ConstantUtils.ID_SESSION_COMMITS)).size() %></div>
+									<div class="huge"><%= ((List<GHCommit>) session.getAttribute(ConstantUtils.ID_SESSION_COMMITS)).size() %></div>
 									<div>Commits !</div>
 								</div>
 							</div>
@@ -313,7 +317,7 @@
 									<i class="fa fa-tasks fa-5x"></i>
 								</div>
 								<div class="col-xs-9 text-right">
-									<div class="huge"><%= ((List<Repository>) session.getAttribute(ConstantUtils.ID_SESSION_REPOS)).size() %></div>
+									<div class="huge"><%= ((List<GHRepository>) session.getAttribute(ConstantUtils.ID_SESSION_REPOS)).size() %></div>
 									<div>Github project</div>
 								</div>
 							</div>
@@ -374,13 +378,13 @@
 									</tr>
 								</thead>
 								<tbody>
-									<% for (RepositoryCommit commit : (List<RepositoryCommit>) session.getAttribute(ConstantUtils.ID_SESSION_COMMITS)){ %>
+									<% for (CommitDTO commit : (List<CommitDTO>) session.getAttribute(ConstantUtils.ID_SESSION_COMMITS)){ %>
 									
 										<tr>
-											<td><%= commit.getCommit().getAuthor().getDate() %></td>
-											<td><%= commit.getCommit().getMessage() %></td>
-											<td><%= commit.getCommit().getAuthor().getName() %></td>
-											<td><a href="<%= commit.getUrl() %>"><strong>Link</strong></a></td>
+											<td><%= commit.getCommitDate() %></td>
+											<td><%= commit.getMessage() %></td>
+											<td><%= (commit.getAuthor() != null)?commit.getAuthor().getName():"<unknown>" %></td>
+											<td><a href="<%= (commit.getHtmlUrl() != null)?commit.getHtmlUrl():"#" %>"><strong>Link</strong></a></td>
 										</tr>
 									<% } %>
 								</tbody>

@@ -49,6 +49,20 @@ public class StorageService {
 	public File getFile(String name, String extension) {
 		return new File(getASTBEVDirectoryFile(), name + extension);
 	}
+	
+	/**
+	 * Get a file from app's common directory
+	 * @param name
+	 * @param extension
+	 * @return File
+	 */
+	public File getFile(String pathInCommonDirectory, String name, String extension) {
+		
+		String parentFolderPath = getASTBEVDirectory()+File.separator+pathInCommonDirectory;
+		File parentFolder = new File(parentFolderPath);
+		if(!parentFolder.exists()) parentFolder.mkdirs();
+		return new File(parentFolder, name + extension);
+	}
 
 	/**
 	 * Get a file from app's common directory

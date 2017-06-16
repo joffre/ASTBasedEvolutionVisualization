@@ -1,10 +1,14 @@
-<%@page import="org.eclipse.egit.github.core.Repository"%>
-<%@page import="org.eclipse.egit.github.core.RepositoryCommit"%>
+<%@page import="entity.CommitDTO"%>
+<%@page import="entity.RepositoryDTO"%>
+<%@page import="org.kohsuke.github.GHCommit"%>
+<%@page import="org.kohsuke.github.GHRepository"%>
+<%-- <%@page import="org.eclipse.egit.github.core.Repository"%> --%>
+<%-- <%@page import="org.eclipse.egit.github.core.RepositoryCommit"%> --%>
 <%@page import="java.util.ArrayList"%>
 <%@page import="java.util.List"%>
 <%@page import="com.hamesc.opl.utils.ConstantUtils"%>
 <%@page import="java.util.Map"%>
-<%@page import="org.eclipse.egit.github.core.PullRequest"%>
+<%-- <%@page import="org.eclipse.egit.github.core.PullRequest"%> --%>
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1"
 	pageEncoding="ISO-8859-1"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
@@ -267,9 +271,9 @@
 					<li><a href="#"><i class="fa fa-bar-chart-o fa-fw"></i>User
 							projects<span class="fa arrow"></span></a>
 						<ul class="nav nav-second-level">
-							<% for(Repository repo : (List<Repository>) session.getAttribute(ConstantUtils.ID_SESSION_REPOS)){ %>
+							<% for(RepositoryDTO repo : (List<RepositoryDTO>) session.getAttribute(ConstantUtils.ID_SESSION_REPOS)){ %>
 							
-							<li><a href="<%= request.getContextPath() %>/projectDetails?name=<%=repo.getName() %>"><%=repo.getName() %></a>
+							<li><a href="<%= request.getContextPath() %>/projectDetails?name=<%=repo.getFullName() %>"><%=repo.getName() %></a>
 							</li>
 							<% } %>
 						</ul> <!-- /.nav-second-level --></li>
@@ -311,15 +315,15 @@
 								</thead>
 								<tbody>
 									<% if(request.getAttribute("commits") != null){ %>
-									<% for(RepositoryCommit rC : (List<RepositoryCommit>) request.getAttribute("commits")){ %>
+									<% for(CommitDTO commit : (List<CommitDTO>) request.getAttribute("commits")){ %>
 										<tr>
 											
-											<td><%= rC.getCommit().getMessage() %>
-											<td><a href="<%= rC.getAuthor().getUrl() %>"><strong><%= rC.getCommit().getAuthor().getName() %></strong></a></td>
-											<td><%= rC.getCommit().getAuthor().getDate() %></td>
-											<td class="center"><%= (rC.getStats() == null)?-1:rC.getStats().getAdditions() %></td>
-											<td class="center"><%= (rC.getStats() == null)?-1:rC.getStats().getDeletions() %></td>
-											<td><a href="<%= rC.getUrl() %>"><strong>Link</strong></a></td>
+											<td><%= commit.getMessage() %>
+											<td><a href="<%= (commit.getAuthor() != null)?commit.getAuthor().getHtmlUrl():"#" %>"><strong><%= (commit.getAuthor()!=null)?commit.getAuthor().getName() : "<unknow>" %></strong></a></td>
+											<td><%= commit.getCommitDate() %></td>
+											<td class="center"><%= commit.getLinesAdded() %></td>
+											<td class="center"><%= commit.getLinesDeleted() %></td>
+											<td><a href="<%= commit.getHtmlUrl() %>"><strong>Link</strong></a></td>
 										</tr>
 										<% } }%>
 								</tbody>

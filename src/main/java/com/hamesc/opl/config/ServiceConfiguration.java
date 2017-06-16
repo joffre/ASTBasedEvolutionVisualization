@@ -10,8 +10,5 @@ import com.hamesc.opl.service.ARepositoryCommitService;
 @ComponentScan("com.hamesc.service")
 public class ServiceConfiguration {
 
-	@Bean
-	public ARepositoryCommitService githubService() {
-		return new ARepositoryCommitService();
-	}
+	
 }

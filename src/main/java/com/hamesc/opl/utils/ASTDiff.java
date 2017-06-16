@@ -1,7 +1,5 @@
-/**
- * Created by denis on 23/03/16.
- */
 package com.hamesc.opl.utils;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -15,14 +13,18 @@ import com.github.gumtreediff.actions.model.Update;
 
 import fr.inria.sacha.spoon.diffSpoon.CtDiff;
 import fr.inria.sacha.spoon.diffSpoon.DiffSpoon;
-import fr.inria.sacha.spoon.diffSpoon.DiffSpoonImpl;
-import fr.inria.sacha.spoon.diffSpoon.SpoonGumTreeBuilder;
+import gumtree.spoon.builder.SpoonGumTreeBuilder;
+import gumtree.spoon.diff.Diff;
+import gumtree.spoon.diff.DiffImpl;
 import spoon.reflect.declaration.CtElement;
 import spoon.reflect.declaration.CtType;
 
+/**
+ * @author Denis
+ *
+ */
 public class ASTDiff {
-
-    private String newContent;
+	private String newContent;
     private String oldContent;
     private String nomNew;
     private String nomOld;
@@ -50,7 +52,7 @@ public class ASTDiff {
 
         final CtType newCl;
         final CtType oldCl;
-        DiffSpoon diffSpoon = null;
+        Diff diffSpoon = null;
 
         JSONObject jActions = new JSONObject();
 
@@ -58,7 +60,7 @@ public class ASTDiff {
 
             if (newTypes.get(nomNew) != null) {
                 newCl = newTypes.get(nomNew);
-                diffSpoon = new DiffSpoonImpl(newCl.getFactory());
+                diffSpoon = new DiffImpl(newCl.getFactory());
             } else {
                 newCl = null;
             }
@@ -66,12 +68,12 @@ public class ASTDiff {
             if (oldTypes.get(nomOld) != null) {
                 oldCl = oldTypes.get(nomOld);
                 if (diffSpoon == null) {
-                    diffSpoon = new DiffSpoonImpl(oldCl.getFactory());
+                    diffSpoon = new DiffImpl(oldCl.getFactory());
                 }
             } else {
                 oldCl = null;
                 if (newCl == null) {
-                    diffSpoon = new DiffSpoonImpl();
+                    diffSpoon = new DiffImpl();
                 }
             }
             CtDiff results = diffSpoon.compare(oldCl, newCl);
