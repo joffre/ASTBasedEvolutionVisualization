@@ -116,7 +116,7 @@ public class DashboardController {
 			repositoryCommitService.loadAllCommitFiles(repository, commits);
 			logger.info("Commits found for repository '" + projectName+"' loaded.");
 			
-			diffService.compareAll(repository, commits);
+			diffService.compareRecursively(repository, commits);
 		} catch (IOException e) {
 			logger.info("Pas de commits pour ce repository : " + projectName);
 			logger.error(e.getMessage(),e);
