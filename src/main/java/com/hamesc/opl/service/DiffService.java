@@ -1,13 +1,14 @@
 package com.hamesc.opl.service;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
-import org.kohsuke.github.GHCommit;
-import org.kohsuke.github.GHCommit.File;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -21,7 +22,6 @@ import com.github.gumtreediff.actions.model.Update;
 
 import entity.CommitDTO;
 import entity.FileDTO;
-import entity.PairDTO;
 import entity.RepositoryDTO;
 import gumtree.spoon.AstComparator;
 import gumtree.spoon.builder.SpoonGumTreeBuilder;
@@ -37,27 +37,23 @@ public class DiffService {
 	@Autowired
 	private StorageService storageService;
 
-	public void getCompilationUnit(GHCommit repoCommit) throws IOException {
-		for (File file : repoCommit.getFiles()) {
-			System.out.println(file.getFileName() + " - Raw url : " + file.getRawUrl());
-		}
-	}
-
 	/**
 	 * Compare common files between commits
 	 * 
 	 * @param oldCommit
 	 * @param newCommit
 	 */
-	public Map<String,Map<String, Integer>> compare(RepositoryDTO repository, CommitDTO oldCommit, CommitDTO newCommit) {
-		
-		logger.info("Compare commit : " +oldCommit.getCommitDate().toString() + " & commit : " + newCommit.getCommitDate().toString());
+	public Map<String, Map<String, Integer>> compareCommit(RepositoryDTO repository, CommitDTO oldCommit,
+			CommitDTO newCommit) {
+
+		logger.info("Compare commit : " + oldCommit.getCommitDate().toString() + " & commit : "
+				+ newCommit.getCommitDate().toString());
 		if (oldCommit.getCommitDate().after(newCommit.getCommitDate())) {
 			// exchange commit
 		}
 		;
-		
-		Map<String,Map<String, Integer>> statistics = new HashMap<String,Map<String, Integer>>();
+
+		Map<String, Map<String, Integer>> statistics = new HashMap<String, Map<String, Integer>>();
 
 		for (FileDTO oldFile : oldCommit.getFiles()) {
 			for (FileDTO newFile : newCommit.getFiles()) {
@@ -65,29 +61,36 @@ public class DiffService {
 					if (newFile.getFileName().equals(oldFile.getFileName())) {
 						if (newFile.getFileExtension().toLowerCase().contains("java")) {
 							try {
-								Map<String,Map<String, Integer>> compareStats = compareToStats(repository.getName(), oldFile, newFile);
-								
-								//Node type (Method, Field, etc.)
-								for(String type : compareStats.keySet()){
-									
+								Map<String, Map<String, Integer>> compareStats = compareToStats(repository.getName(),
+										oldFile, newFile);
+
+								logger.info("Before -I (current) : " + statistics.toString());
+								logger.info("Before -I (new) : " + compareStats.toString());
+
+								// Node type (Method, Field, etc.)
+								for (String type : compareStats.keySet()) {
+
 									Map<String, Integer> tmpTypeToAdd = compareStats.get(type);
 									Map<String, Integer> currentGlobalType = statistics.get(type);
-									
-									if(currentGlobalType == null){
+
+									if (currentGlobalType == null) {
 										statistics.put(type, tmpTypeToAdd);
 									} else {
-										//Action (Add, Delete, Insert, Move, Update)
-										for(String action : tmpTypeToAdd.keySet()){
-											
-											Integer hitNumber = currentGlobalType.getOrDefault(action, 0);
-											Integer hitToAdd = tmpTypeToAdd.getOrDefault(action, 0);
-											currentGlobalType.put(action, hitNumber+hitNumber);
+										// Action (Add, Delete, Insert, Move,
+										// Update)
+										for (String action : tmpTypeToAdd.keySet()) {
+
+											int hitNumber = currentGlobalType.getOrDefault(action, 0);
+											int hitToAdd = tmpTypeToAdd.getOrDefault(action, 0);
+											currentGlobalType.put(action, hitNumber + hitToAdd);
 										}
-										
+
 										statistics.put(type, currentGlobalType);
 									}
 								}
-								
+
+								logger.info("After -I (current) : " + statistics.toString());
+
 							} catch (IOException e) {
 								logger.error(e.getMessage(), e);
 							}
@@ -106,14 +109,14 @@ public class DiffService {
 	 * @param newFile
 	 * @throws IOException
 	 */
-	public String compare(String repoName, FileDTO oldFile, FileDTO newFile) throws IOException {
+	public String compareFiles(String repoName, FileDTO oldFile, FileDTO newFile) throws IOException {
 		logger.info("Comparison of " + oldFile.getFileName());
 
 		AstComparator diffTool = new AstComparator();
 		try {
 			Diff result = diffTool.compare(storageService.getFile(repoName, oldFile.getAppFileName(), ""),
 					storageService.getFile(repoName, newFile.getAppFileName(), ""));
-			logger.info("Result : " + ((result != null) ? result.getAllOperations().size() : "empty"));
+			logger.info("Result : " + ((result != null) ? result.getRootOperations().size() : "empty"));
 
 			ObjectMapper mapper = new ObjectMapper();
 
@@ -171,8 +174,8 @@ public class DiffService {
 				}
 				actionsArrayNode.add(jsonAction);
 			}
-			
-			logger.info("> Details : " +actionsArrayNode.toString());
+
+			logger.info("> Details : " + actionsArrayNode.toString());
 
 			return actionsArrayNode.toString();
 
@@ -181,7 +184,7 @@ public class DiffService {
 		}
 		return null;
 	}
-	
+
 	/**
 	 * Compare two common files
 	 * 
@@ -189,15 +192,16 @@ public class DiffService {
 	 * @param newFile
 	 * @throws IOException
 	 */
-	public Map<String,Map<String, Integer>> compareToStats(String repoName, FileDTO oldFile, FileDTO newFile) throws IOException {
+	public Map<String, Map<String, Integer>> compareToStats(String repoName, FileDTO oldFile, FileDTO newFile)
+			throws IOException {
 		logger.info("Statistics of comparison of  : " + oldFile.getFileName());
-		Map<String,Map<String, Integer>> statsByAction = new HashMap<String,Map<String, Integer>>();
+
+		Map<String, Map<String, Integer>> statsByAction = new HashMap<String, Map<String, Integer>>();
 		AstComparator diffTool = new AstComparator();
 		try {
 			Diff result = diffTool.compare(storageService.getFile(repoName, oldFile.getAppFileName(), ""),
 					storageService.getFile(repoName, newFile.getAppFileName(), ""));
-			logger.info("Result : " + ((result != null) ? result.getAllOperations().size() : "empty"));
-			
+
 			Map<String, Integer> hitByNodeType;
 			for (Operation op : result.getRootOperations()) {
 
@@ -205,26 +209,31 @@ public class DiffService {
 
 				CtElement element = (CtElement) action.getNode().getMetadata(SpoonGumTreeBuilder.SPOON_OBJECT);
 
+				CtElement ctElement = result.commonAncestor();
+
 				String actionName = action.getClass().getSimpleName();
-				statsByAction.putIfAbsent(actionName, new HashMap<String, Integer>());
-				
-				hitByNodeType = statsByAction.get(actionName);
 
 				String nodeType = element.getClass().getSimpleName();
+
 				nodeType = nodeType.substring(2, nodeType.length() - 4);
-				
-				hitByNodeType.put(nodeType, hitByNodeType.getOrDefault(nodeType, 0)+1);
+
+				statsByAction.putIfAbsent(nodeType, new HashMap<String, Integer>());
+
+				hitByNodeType = statsByAction.get(nodeType);
+
+				hitByNodeType.put(actionName, hitByNodeType.getOrDefault(actionName, 0) + 1);
 
 				// if all actions are applied on the same node print only the
 				// first action
-				if (element.equals(element) && action instanceof Update) {
+				if (element.equals(ctElement) && action instanceof Update) {
 					break;
 				}
-				statsByAction.put(actionName, hitByNodeType);
-				//add
+				statsByAction.put(nodeType, hitByNodeType);
+
+				// add
 			}
-			
-			logger.info("> Details : " +statsByAction.toString());
+
+			logger.info("> Details : " + statsByAction.toString());
 
 			return statsByAction;
 
@@ -239,62 +248,108 @@ public class DiffService {
 		for (CommitDTO commit : commits) {
 			for (CommitDTO commit2 : commits) {
 				if (!commit.getsHA1().equals(commit2.getsHA1())) {
-					 compare(repository, commit, commit2);
+					compareCommit(repository, commit, commit2);
 				}
 			}
 		}
 	}
-	
+
 	/**
-	 * Compare recursively all commits one after another, both directly side by side on time line
-	 * Commit List needs to be ordered by commit date to obtain best results (ASC or DESC => Detected by method before treatment)
+	 * Compare recursively all commits one after another, both directly side by
+	 * side on time line Commit List needs to be ordered by commit date to
+	 * obtain best results (ASC or DESC => Detected by method before treatment)
+	 * 
 	 * @param repository
 	 * @param commits
 	 * @return Map<String,Map<String, Integer>>
 	 */
-	public Map<String,Map<String, Integer>> compareRecursively(RepositoryDTO repository, List<CommitDTO> commits){
-		Map<String,Map<String, Integer>> statistics = new HashMap<String,Map<String, Integer>>();
+	public Map<String, Map<String, Integer>> compareRecursively(RepositoryDTO repository, List<CommitDTO> commits) {
+		Map<String, Map<String, Integer>> statistics = new HashMap<String, Map<String, Integer>>();
 
-		if(commits.size() >= 2){
-			
+		if (commits.size() >= 2) {
+
 			boolean ascSorted = commits.get(0).getCommitDate().before(commits.get(1).getCommitDate());
-			
-			for(int i = 0; i < commits.size()-1; i++){
-				int indexOld = ascSorted?i:commits.size()-1-i;
-				int indexNewer = indexOld +(ascSorted?1:-1);
-				
-				Map<String,Map<String, Integer>> compareStats = compare(repository, commits.get(indexOld), commits.get(indexNewer));
-				
-				logger.info("Before (current) : " + statistics.toString());
-				logger.info("Before (new) : " + compareStats.toString() );
-				
-				//Node type (Method, Field, etc.)
-				for(String type : compareStats.keySet()){
-					
+
+			for (int i = 0; i < commits.size() - 1; i++) {
+				int indexOld = ascSorted ? i : commits.size() - 1 - i;
+				int indexNewer = indexOld + (ascSorted ? 1 : -1);
+
+				Map<String, Map<String, Integer>> compareStats = compareCommit(repository, commits.get(indexOld),
+						commits.get(indexNewer));
+
+				logger.info("Before -G (current) : " + statistics.toString());
+				logger.info("Before -G (new) : " + compareStats.toString());
+
+				// Node type (Method, Field, etc.)
+				for (String type : compareStats.keySet()) {
+
 					Map<String, Integer> tmpTypeToAdd = compareStats.get(type);
 					Map<String, Integer> currentGlobalType = statistics.get(type);
-					
-					if(currentGlobalType == null){
+
+					if (currentGlobalType == null) {
 						statistics.put(type, tmpTypeToAdd);
 					} else {
-						//Action (Add, Delete, Insert, Move, Update)
-						for(String action : tmpTypeToAdd.keySet()){
-							
+						// Action (Add, Delete, Insert, Move, Update)
+						for (String action : tmpTypeToAdd.keySet()) {
+
 							Integer hitNumber = currentGlobalType.getOrDefault(action, 0);
 							Integer hitToAdd = tmpTypeToAdd.getOrDefault(action, 0);
-							currentGlobalType.put(action, hitNumber+hitNumber);
+							currentGlobalType.put(action, hitNumber + hitToAdd);
 						}
-						
+
 						statistics.put(type, currentGlobalType);
 					}
 				}
-				
-				logger.info("After (current) : " + statistics.toString());
-				logger.info("After (new) : " + compareStats.toString());
+
+				logger.info("After (new) : " + statistics.toString());
 			}
 		}
-		
+
 		return statistics;
+	}
+
+	public String parseComparatorDataToStringTable(Map<String, Map<String, Integer>> stats) {
+		StringBuilder builder = new StringBuilder();
+
+		List<String> actionLabels = getActionLabelsFromComparatorData(stats.values());
+		builder.append("[");
+		builder.append("'Java Type', ");
+		for (int i = 0; i < actionLabels.size(); i++) {
+			builder.append("'" + actionLabels.get(i) + "'");
+			if (i < actionLabels.size() - 1)
+				builder.append(", ");
+		}
+		builder.append("]");
+		builder.append(", ");
+
+		for (Iterator<String> iterator = stats.keySet().iterator(); iterator.hasNext();) {
+			String type = iterator.next();
+			Map<String, Integer> actionValues = stats.get(type);
+			builder.append("[");
+			builder.append("'" + type + "', ");
+			for (int i = 0; i < actionLabels.size(); i++) {
+				builder.append("" + actionValues.getOrDefault(actionLabels.get(i), 0) + "");
+				if (i < actionLabels.size() - 1)
+					builder.append(", ");
+			}
+			builder.append("]");
+			if (iterator.hasNext())
+				builder.append(", ");
+		}
+
+		return builder.toString();
+	}
+
+	public List<String> getActionLabelsFromComparatorData(Collection<Map<String, Integer>> statsActionsValues) {
+		List<String> actionLabels = new ArrayList<String>();
+
+		for (Map<String, Integer> actionValues : statsActionsValues) {
+			for (String actionName : actionValues.keySet())
+				if (!actionLabels.contains(actionName))
+					actionLabels.add(actionName);
+		}
+
+		return actionLabels;
 	}
 
 }

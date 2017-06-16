@@ -3,7 +3,9 @@ package com.hamesc.opl.controller;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -19,6 +21,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.SessionAttribute;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hamesc.opl.service.ARepositoryCommitService;
 import com.hamesc.opl.service.ARepositoryService;
 import com.hamesc.opl.service.DiffService;
@@ -115,12 +118,17 @@ public class DashboardController {
 			
 			repositoryCommitService.loadAllCommitFiles(repository, commits);
 			logger.info("Commits found for repository '" + projectName+"' loaded.");
+			Collections.sort(commits);
+			Map<String, Map<String, Integer>> diffs = diffService.compareRecursively(repository, commits);
 			
-			diffService.compareRecursively(repository, commits);
+			mv.addObject("diffs",diffService.parseComparatorDataToStringTable(diffs));
+			
 		} catch (IOException e) {
 			logger.info("Pas de commits pour ce repository : " + projectName);
 			logger.error(e.getMessage(),e);
 		}
 		return mv;
 	}
+	
+	
 }

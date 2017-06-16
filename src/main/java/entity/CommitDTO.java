@@ -14,7 +14,7 @@ import org.kohsuke.github.GHCommit;
  * @author Geoffrey
  *
  */
-public class CommitDTO implements Serializable{
+public class CommitDTO implements Serializable, Comparable<CommitDTO>{
 	
 	/**
 	 * 
@@ -164,6 +164,11 @@ public class CommitDTO implements Serializable{
 
 	public final void setsHA1(String sHA1) {
 		this.sHA1 = sHA1;
+	}
+
+	@Override
+	public int compareTo(CommitDTO o) {
+		return this.getCommitDate().compareTo(o.getCommitDate());
 	}
 
 }
